@@ -12,12 +12,13 @@ incs = ['.'] + map(lambda x: os.path.join('spams',x),[ 'linalg', 'prox', 'decomp
 osname = distutils.util.get_platform()
 cc_flags = ['-fPIC', '-fopenmp']
 link_flags = ['-fopenmp', '-s' ]
-libs = ['stdc++', 'blas', 'lapack' ]
+libs = ['stdc++', 'atlas', 'lapack', 'gomp', 'gfortran', 'blas' ]
+#libs = ['stdc++', 'lapack', 'gomp' ]
 libdirs = []
 
 if osname.startswith("macosx"):
-    cc_flags = ['-fPIC', '-fopenmp','-m32']
-    link_flags = ['-m32', '-framework', 'Python']
+    cc_flags = ['-fPIC', '-fopenmp','-m64', '-I/magnetic/mac-binary-bpd/include']
+    link_flags = ['-m64', '-F/magnetic/mac-binary-bpd/Frameworks', '-framework', 'Python', '-L/magnetic/mac-binary-bpd/lib', '-L/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/x86_64']
 
 if osname.startswith("win32"):
     cc_flags = ['-fPIC', '-fopenmp','-DWIN32']
@@ -40,7 +41,8 @@ spams_wrap = Extension(
     '_spams_wrap',
     sources = ['spams_wrap.cpp'],
     include_dirs = incs,
-    extra_compile_args = ['-DNDEBUG', '-DUSE_BLAS_LIB'] + cc_flags,
+    #extra_compile_args = ['-DNDEBUG', '-DUSE_BLAS_LIB'] + cc_flags,
+    extra_compile_args = ['-DNDEBUG'] + cc_flags,
     library_dirs = libdirs,
     libraries = libs,
     # strip the .so
